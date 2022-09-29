@@ -1,17 +1,17 @@
-import { EgretLoadable } from "egret";
-import ConstantList from "../../appConfig";
-import { useTranslation, withTranslation, Trans } from 'react-i18next';
+import { EgretLoadable } from 'egret';
+import ConstantList from '../../appConfig';
+import { withTranslation } from 'react-i18next';
 const Employee = EgretLoadable({
-  loader: () => import("./Employee")
+	loader: () => import('./Employee'),
 });
 const ViewComponent = withTranslation()(Employee);
 
 const EmployeeRoutes = [
-  {
-    path: ConstantList.ROOT_PATH + "directory/employee",
-    exact: true,
-    component: ViewComponent
-  }
+	{
+		path: ConstantList.ROOT_PATH + 'directory/employee',
+		exact: true,
+		component: ViewComponent,
+	},
 ];
 
 export default EmployeeRoutes;

@@ -107,6 +107,18 @@ export default function EmployeeEditorDialog(props) {
 	const [provincesData, setProvincesData] = useState([]);
 	const [districtsData, setDistrictsData] = useState([]);
 
+	var dataSubmit = {
+		name,
+		age,
+		code,
+		email,
+		phone,
+		province,
+		commune,
+		district,
+		id: props.employeeData.id,
+	};
+
 	useEffect(() => {
 		SearchProvince({}).then((res) => {
 			setProvincesData(res.data.data);
@@ -126,9 +138,6 @@ export default function EmployeeEditorDialog(props) {
 			setEmail(props.employeeData.email);
 			setCode(props.employeeData.code);
 			setPhone(props.employeeData.phone);
-			setProvince(props.employeeData.province);
-			setDistrict(props.employeeData.district);
-			setCommune(props.employeeData.commune);
 		}
 	}, [props.employeeData]);
 
@@ -172,17 +181,7 @@ export default function EmployeeEditorDialog(props) {
 		const isvalid = Validator();
 		if (isvalid) {
 			if (props.employeeData.id) {
-				updateEmployee({
-					name,
-					age,
-					code,
-					email,
-					phone,
-					province,
-					commune,
-					district,
-					id: props.employeeData.id,
-				}).then((res) => {
+				updateEmployee(dataSubmit).then((res) => {
 					if (res.data.data === null) {
 						toast.error(res.data.message);
 					} else {
@@ -192,16 +191,7 @@ export default function EmployeeEditorDialog(props) {
 					}
 				});
 			} else {
-				AddEmployee({
-					name,
-					age,
-					code,
-					email,
-					phone,
-					province,
-					commune,
-					district,
-				}).then((res) => {
+				AddEmployee(dataSubmit).then((res) => {
 					if (res.data.data === null) {
 						toast.error(res.data.message);
 					} else {
@@ -238,18 +228,12 @@ export default function EmployeeEditorDialog(props) {
 					<CloseIcon color="secondary" />
 				</button>
 			</Grid>
-
 			<DialogContent>
 				<Grid className={classes.textField}>
 					<Grid>
 						<TextField
 							className={classes.Error}
 							helperText={!name && validatorMsg.name}
-							// onClick={() => {
-							//     validatorMsg.name = ''
-
-							// }}
-
 							label="* Full Name"
 							type="text"
 							fullWidth
@@ -277,7 +261,6 @@ export default function EmployeeEditorDialog(props) {
 						/>
 					</Grid>
 				</Grid>
-
 				<Grid className={classes.groupInput}>
 					<Grid
 						item
@@ -328,15 +311,12 @@ export default function EmployeeEditorDialog(props) {
 						/>
 					</Grid>
 				</Grid>
-
-				{/* {(!props.employeeData.id) && ()} */}
 				<Grid className={classes.groupInput}>
 					<Grid
 						xs={5}
 						className={classes.textField}>
 						<FormControl fullWidth>
 							<InputLabel>Provinces</InputLabel>
-
 							<Select
 								defaultValue=""
 								onChange={(e) => {
@@ -345,6 +325,7 @@ export default function EmployeeEditorDialog(props) {
 								<MenuItem value="">
 									<em>None</em>
 								</MenuItem>
+
 								{provincesData.map((province) => (
 									<MenuItem
 										color="primary"
@@ -357,7 +338,6 @@ export default function EmployeeEditorDialog(props) {
 						</FormControl>
 						<p className={classes.p}>{province ? '' : validatorMsg.province}</p>
 					</Grid>
-
 					<Grid
 						xs={5}
 						className={classes.textField}>
@@ -387,7 +367,6 @@ export default function EmployeeEditorDialog(props) {
 											{district.name}
 										</MenuItem>
 									))}
-
 								<ListSubheader color="primary">Thanh Hóa</ListSubheader>
 								{districtsData
 									.filter((district) => {
@@ -407,7 +386,6 @@ export default function EmployeeEditorDialog(props) {
 											{district.name}
 										</MenuItem>
 									))}
-
 								<ListSubheader color="primary">Hà Nội</ListSubheader>
 								{districtsData
 									.filter((district) => {
@@ -431,7 +409,6 @@ export default function EmployeeEditorDialog(props) {
 						</FormControl>
 						<p className={classes.p}>{district ? '' : validatorMsg.district}</p>
 					</Grid>
-
 					<Grid
 						xs={5}
 						className={classes.textField}>

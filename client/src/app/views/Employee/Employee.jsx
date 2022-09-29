@@ -1,34 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import MaterialTable from 'material-table';
-
-import {
-	Grid,
-	TextField,
-	ButtonGroup,
-	Button,
-	IconButton,
-	Icon,
-} from '@material-ui/core';
+import { Grid, TextField, Button, IconButton, Icon } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Helmet } from 'react-helmet';
 import { Breadcrumb, ConfirmationDialog } from 'egret';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import { withStyles } from '@material-ui/core/styles';
 import { Tooltip } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
+
 import SearchIcon from '@material-ui/icons/Search';
 import EmployeeEditorDialog from './EmployeeEditorDialog';
 import { searchByDto, deleteEmployee } from './EmployeeService';
 import { toast } from 'react-toastify';
-import { useTranslation, withTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 toast.configure({
 	autoClose: 1000,
 	draggable: false,
 	limit: 3,
 });
-
 const LightTooltip = withStyles((theme) => ({
 	tooltip: {
 		backgroundColor: theme.palette.common.white,
@@ -41,7 +31,6 @@ const LightTooltip = withStyles((theme) => ({
 		width: '80px',
 	},
 }))(Tooltip);
-
 const useStyles = makeStyles((theme) => ({
 	box: {
 		display: 'flex',
@@ -49,7 +38,6 @@ const useStyles = makeStyles((theme) => ({
 		alignItems: 'space-evenly',
 		padding: theme.spacing(1),
 	},
-
 	groupButton: {
 		marginLeft: 10,
 		marginTop: 20,
@@ -77,15 +65,14 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
+//Employee Function
 function Employee() {
 	const classes = useStyles();
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 
 	const [itemList, setItemList] = useState([]);
-	const [state, setState] = useState(true);
 	const [open, setOpen] = useState(false);
 	const [deleteButton, setDeleteButton] = useState(false);
-	const [submit, setSubmit] = useState(false);
 	const [search, setSearch] = useState('');
 	const [oldUser, setOldUser] = useState({});
 
@@ -143,7 +130,7 @@ function Employee() {
 		searchByDto({}).then((res) => {
 			setItemList(res.data.data);
 		});
-	}, [state]);
+	}, []);
 	useEffect(() => {
 		searchByDto({}).then((res) => {
 			setItemList(res.data.data.filter((employee) => handleSearch(employee)));
@@ -174,28 +161,21 @@ function Employee() {
 		}
 	};
 
-	//edit
 	const handleOpen = () => {
 		setOpen(true);
 		setOldUser({});
 	};
-
 	const handleClose = () => {
 		setOpen(false);
 		setOldUser({});
 	};
-
-	//delete
-
 	const handleClose__Delete = () => {
 		setDeleteButton(false);
 	};
-
 	const handleOpenDelete = (rowData) => {
 		setDeleteButton(true);
 		setOldUser(rowData);
 	};
-
 	const handleDeleteEmployee = (data) => {
 		setOldUser(data);
 		deleteEmployee(data).then(() => {
@@ -204,73 +184,23 @@ function Employee() {
 			toast.success('Xóa thành công');
 		});
 	};
-
-	// edit
 	const handleEdit = (rowData) => {
 		setOpen(true);
 		setOldUser(rowData);
 	};
 
-	const handleSubmit = (
-		name,
-		age,
-		code,
-		email,
-		phone,
-		province,
-		district,
-		commune
-	) => {};
-
 	return (
 		<div className="m-sm-30">
-			<EmployeeEditorDialog
-				employeeData={oldUser}
-				setstate={setState}
-				state={state}
-				handleClose={handleClose}
-				submit={submit}
-				open={open}
-				setOpen={setOpen}
-				reRender={reRender}
-				setSubmit={setSubmit}
-				setHandleSubmit={(
-					name,
-					age,
-					code,
-					email,
-					phone,
-					province,
-					district,
-					commune
-				) =>
-					handleSubmit(
-						name,
-						age,
-						code,
-						email,
-						phone,
-						province,
-						district,
-						commune
-					)
-				}
-			/>
-
 			<Grid className={classes.box}>
 				<Helmet>
 					<title>Quản lý nhân viên</title>
 				</Helmet>
 				<div>
 					<Breadcrumb
-						routeSegments={[
-							{ name: 'Danh mục', path: '/directory/apartment' },
-							{ name: 'Nhân viên' },
-						]}
+						routeSegments={[{ name: 'Danh mục' }, { name: 'Nhân viên' }]}
 					/>
 				</div>
 			</Grid>
-
 			<Grid className={classes.box}>
 				<Button
 					variant="contained"
@@ -279,7 +209,6 @@ function Employee() {
 					Thêm mới
 					<PersonAddIcon className={classes.button1} />
 				</Button>
-
 				{/* Search Input */}
 				<Grid className={classes.search}>
 					<TextField
@@ -296,20 +225,6 @@ function Employee() {
 						}}
 					/>
 				</Grid>
-			</Grid>
-
-			<Grid>
-				<ConfirmationDialog
-					open={deleteButton}
-					onConfirmDialogClose={handleClose__Delete}
-					onYesClick={() => {
-						handleDeleteEmployee(oldUser);
-					}}
-					text={`Bạn có chắc muốn xóa "${oldUser.name}"?`}
-					title="Xác nhận"
-					No={'Không'}
-					Yes={'Đồng ý'}
-				/>
 			</Grid>
 
 			<Grid xs={12}>
@@ -338,6 +253,28 @@ function Employee() {
 							emptyDataSourceMessage: 'No data',
 						},
 					}}
+				/>
+			</Grid>
+			{open && (
+				<EmployeeEditorDialog
+					open={open}
+					employeeData={oldUser}
+					handleClose={handleClose}
+					setOpen={setOpen}
+					reRender={reRender}
+				/>
+			)}
+			<Grid>
+				<ConfirmationDialog
+					open={deleteButton}
+					onConfirmDialogClose={handleClose__Delete}
+					onYesClick={() => {
+						handleDeleteEmployee(oldUser);
+					}}
+					text={`Bạn có chắc muốn xóa "${oldUser.name}"?`}
+					title="Xác nhận"
+					No={'Không'}
+					Yes={'Đồng ý'}
 				/>
 			</Grid>
 		</div>
